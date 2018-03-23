@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Menu log</string>
+    <string name="error_unknown_error">Unknown Error</string>
+    <string name="error_no_internet_connection">No internet connection</string>
+    <string name="error_authentication_failed">Authentication failed</string>
+    <string name="error_postcode_is_empty">postcode can not be empty</string>
+    <string name="restaurants_in">restaurants in %1$s</string>
+</resources>

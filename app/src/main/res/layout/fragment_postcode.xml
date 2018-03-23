@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/view_toolbar"/>
+        <EditText
+            android:id="@+id/editPostcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_double"
+            android:layout_marginLeft="@dimen/margin_double"
+            android:layout_marginRight="@dimen/margin_double"
+            android:inputType="textPostalAddress"
+            android:hint="Enter your post code"/>
+        <Button
+            android:id="@+id/btnFind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_short"
+            android:layout_marginLeft="@dimen/margin_double"
+            android:layout_marginRight="@dimen/margin_double"
+            android:text="Find restaurants"/>
+        <Button
+            android:id="@+id/btnMyLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_short"
+            android:layout_marginLeft="@dimen/margin_double"
+            android:layout_marginRight="@dimen/margin_double"
+            android:text="Use my location"/>
+
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+</FrameLayout>
