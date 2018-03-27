@@ -8,6 +8,7 @@ import com.moji.menulog.domain.entities.RestaurantView
 import com.moji.menulog.presentation.listeners.GetRestaurantListListener
 import com.moji.menulog.presentation.presenters.RestaurantPresenter
 import com.nhaarman.mockito_kotlin.capture
+import org.hamcrest.CoreMatchers.not
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -54,7 +55,7 @@ class PresentersSucceedMockitoTest {
         Mockito.verify(mMockRestaurantListener).onRestaurantListFetched(capture(captor))
         Mockito.verify(mMockRestaurantListener).hideProgress()
         val capturedArgument = captor.value
-        Assert.assertTrue(capturedArgument.isNotEmpty())
+        Assert.assertThat(capturedArgument, not(emptyList()))
     }
 }
 

@@ -1,6 +1,7 @@
 package com.moji.menulog.presentation.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +15,13 @@ import com.moji.menulog.presentation.recyclerviews.RestaurantAdapter
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : ToolbarFragment(), GetRestaurantListListener {
-
+    companion object {
+        const val LIST_STATE_KEY = "recycler_list_state"
+    }
     private lateinit var presenter : RestaurantPresenter
     private val newsAdapter = RestaurantAdapter(emptyList())
     private lateinit var postcode : String
+    private var listState: Parcelable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -28,6 +32,20 @@ class MainFragment : ToolbarFragment(), GetRestaurantListListener {
         super.onViewCreated(view, savedInstanceState)
         setViews()
         presenter.getRestaurantList(postcode)
+    }
+
+    override fun onSaveInstanceState(state: Bundle?) {
+        super.onSaveInstanceState(state)
+        // Save list state
+        listState = recyclerRestaurants.layoutManager.onSaveInstanceState()
+        state?.putParcelable(LIST_STATE_KEY, listState)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            listState = savedInstanceState.getParcelable(LIST_STATE_KEY)
+        }
     }
 
     private fun setViews(){
@@ -47,6 +65,10 @@ class MainFragment : ToolbarFragment(), GetRestaurantListListener {
     // this is called when requesting for news list is successful
     override fun onRestaurantListFetched(restaurantList: List<RestaurantView>?) {
         newsAdapter.data = restaurantList
+        if(listState != null){
+            recyclerRestaurants.layoutManager.onRestoreInstanceState(listState)
+            listState = null
+        }
     }
 
     // this is called when presenter is done with api calling

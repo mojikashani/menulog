@@ -10,6 +10,7 @@ import com.moji.menulog.presentation.listeners.GetPostcodeListener
 import com.moji.menulog.presentation.presenters.PostcodePresenter
 import com.moji.menulog.presentation.presenters.RestaurantPresenter
 import com.nhaarman.mockito_kotlin.capture
+import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -56,7 +57,7 @@ class GooglePresenterSucceedMockitoTest {
         Mockito.verify(mMockPostcodeListener).onPostcodeFetched(capture(captor))
         Mockito.verify(mMockPostcodeListener).hideProgress()
         val capturedArgument = captor.value
-        Assert.assertTrue(capturedArgument.contains("SE19"))
+        Assert.assertThat(capturedArgument, CoreMatchers.containsString("SE19"))
     }
 }
 
