@@ -20,16 +20,18 @@ class RestaurantView : Serializable {
 
     val cuisineTypesInString : String
     get() {
-        var cuisineTypesString = ""
         cuisineTypes?.let {
+            var cuisineTypesString = ""
             for (cuisine in cuisineTypes) {
                 cuisineTypesString += cuisine.name + ", "
             }
             if(cuisineTypesString.length >=2){
                 cuisineTypesString= cuisineTypesString.substring(0, cuisineTypesString.length - 2)
             }
+            return cuisineTypesString
+        } ?: run {
+            return ""
         }
-        return cuisineTypesString
     }
 
 }

@@ -6,7 +6,6 @@ import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,16 +55,17 @@ class PostCodeFragment : ToolbarFragment() , GetPostcodeListener {
         }
 
         btnMyLocation.setOnClickListener{
-            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // No need for explanation: it is obvious to user
-                ActivityCompat.requestPermissions(activity,
+            when (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)){
+                PackageManager.PERMISSION_GRANTED ->{
+                    // Permission has already been granted
+                    getPostcodeFromLocation()
+                }
+                else ->{
+                    // No need for explanation: it is obvious to user
+                    ActivityCompat.requestPermissions(activity,
                             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                             MY_PERMISSIONS_REQUEST_LOCATION)
-
-            } else {
-                // Permission has already been granted
-                getPostcodeFromLocation()
+                }
             }
         }
     }
