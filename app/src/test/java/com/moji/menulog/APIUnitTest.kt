@@ -4,6 +4,7 @@ import com.moji.menulog.data.rest.Endpoints
 import com.moji.menulog.data.rest.RestApi
 import com.moji.menulog.domain.entities.GetRestaurantListResponseView
 import io.reactivex.observers.TestObserver
+import junit.framework.Assert.assertTrue
 import org.junit.Test
 
 import org.junit.Before
@@ -23,5 +24,7 @@ class APIUnitTest {
         endpoints.getRestaurantList("SE19").subscribe(testObserver)
         testObserver.assertNoErrors()
         testObserver.assertComplete()
+        var results = testObserver.values()
+        assertTrue(results[0]?.restaurantList?.isNotEmpty() ?: false)
     }
 }
