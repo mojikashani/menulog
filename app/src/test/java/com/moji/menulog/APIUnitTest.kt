@@ -1,30 +1,34 @@
 package com.moji.menulog
 
-import com.moji.menulog.data.rest.Endpoints
-import com.moji.menulog.data.rest.RestApi
-import com.moji.menulog.domain.entities.GetRestaurantListResponseView
+import com.moji.menulog.injection.module.NetworkModule.provideRestaurantApi
+import com.moji.menulog.injection.module.NetworkModule.provideRetrofitInterface
+import com.moji.menulog.network.RestaurantApi
+import com.moji.menulog.model.GetRestaurantListResponse
 import io.reactivex.observers.TestObserver
 import junit.framework.Assert.assertTrue
 import org.junit.Test
 
 import org.junit.Before
+import javax.inject.Inject
 
 class APIUnitTest {
 
-    private lateinit var endpoints:Endpoints
+    @Inject
+    private lateinit var endpoints: RestaurantApi
 
     @Before
     fun setUp(){
-        endpoints = RestApi.getEndpoints()
+        var retrofit = provideRetrofitInterface()
+        endpoints = provideRestaurantApi(retrofit)
     }
 
     @Test
     fun restaurant_api_should_retrieve_result() {
-        var testObserver : TestObserver<GetRestaurantListResponseView?> =TestObserver.create()
+        var testObserver : TestObserver<GetRestaurantListResponse?> =TestObserver.create()
         endpoints.getRestaurantList("SE19").subscribe(testObserver)
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         var results = testObserver.values()
-        assertTrue(results[0]?.restaurantList?.isNotEmpty() ?: false)
+        assertTrue(results[0]?.Restaurants?.isNotEmpty() ?: false)
     }
 }

@@ -1,24 +1,32 @@
 package com.moji.menulog.presentation.presenters
 
-import android.content.Context
-import com.moji.menulog.data.rest.RestApi
-import com.moji.menulog.domain.entities.GetRestaurantListResponseView
-import com.moji.menulog.presentation.listeners.GetRestaurantListListener
-import com.moji.menulog.data.rest.Endpoints
+import com.moji.menulog.model.GetRestaurantListResponse
+import com.moji.menulog.network.GoogleApi
+import com.moji.menulog.network.RestaurantApi
+import com.moji.menulog.presentation.views.GetRestaurantListView
+import com.moji.menulog.presentation.presenters.base.BasePresenter
+import com.moji.menulog.presentation.presenters.base.BaseViewSubscriber
+import com.moji.menulog.presentation.views.GetPostcodeView
+import javax.inject.Inject
 
 
-class RestaurantPresenter(private val context: Context, private val endpoints: Endpoints, private val listener: GetRestaurantListListener)
-    : Presenter<GetRestaurantListResponseView>(context) {
-    constructor(context: Context,  listener: GetRestaurantListListener): this(context, RestApi.getEndpoints(), listener)
+class RestaurantPresenter(view: GetRestaurantListView)
+    : BasePresenter<GetRestaurantListView>(view) {
+    constructor(view: GetRestaurantListView, restaurantApiTest: RestaurantApi):this(view){
+        restaurantApi = restaurantApiTest
+    }
+
+    @Inject
+    lateinit var restaurantApi: RestaurantApi
 
     // this method calls all api request and handle all possible scenarios
     fun getRestaurantList(postcode : String) {
-        callApi(endpoints.getRestaurantList(postcode), RestaurantObserver(listener), listener)
+        callApi(restaurantApi.getRestaurantList(postcode), RestaurantObserver(view))
     }
 
-    private class RestaurantObserver(private var listener: GetRestaurantListListener) : BaseViewSubscriber<GetRestaurantListResponseView, GetRestaurantListListener>(listener) {
-        override fun onSucceed(response: GetRestaurantListResponseView) {
-            listener.onRestaurantListFetched(response.restaurantList)
+    private class RestaurantObserver(val _view: GetRestaurantListView) : BaseViewSubscriber<GetRestaurantListResponse, GetRestaurantListView>(_view) {
+        override fun onSucceed(response: GetRestaurantListResponse) {
+            _view.onRestaurantListFetched(response.Restaurants ?: listOf())
         }
     }
 

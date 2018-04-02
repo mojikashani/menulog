@@ -1,33 +1,40 @@
 package com.moji.menulog.presentation.presenters
 
-import android.content.Context
-import com.moji.menulog.data.rest.GoogleApi
-import com.moji.menulog.data.rest.GoogleEndpoints
-import com.moji.menulog.domain.entities.GetPostcodeResponseView
-import com.moji.menulog.presentation.listeners.GetPostcodeListener
+import com.moji.menulog.model.GetPostcodeResponse
+import com.moji.menulog.network.GoogleApi
+import com.moji.menulog.presentation.presenters.base.BasePresenter
+import com.moji.menulog.presentation.presenters.base.BaseViewSubscriber
+import com.moji.menulog.presentation.views.GetPostcodeView
+import com.moji.menulog.utils.API_KEY
+import javax.inject.Inject
 
 /**
  * Created by moji on 20/3/18.
  */
-class PostcodePresenter(private val context: Context, private val endpoints: GoogleEndpoints, private val listener: GetPostcodeListener)
-    : Presenter<GetPostcodeResponseView>(context) {
-    constructor(context: Context, listener: GetPostcodeListener): this(context, GoogleApi.getEndpoints(), listener)
+open class PostcodePresenter(view: GetPostcodeView)
+    : BasePresenter<GetPostcodeView>(view) {
+    constructor(view: GetPostcodeView, googleApiTest: GoogleApi):this(view){
+        googleApi = googleApiTest
+    }
+
+    @Inject
+    lateinit var googleApi: GoogleApi
 
     // this method calls all api request and handle all possible scenarios
     fun getPostcode(lan: Double, lng: Double) {
-        callApi(endpoints.getPostcode(lan.toString()+","+lng.toString(), GoogleEndpoints.API_KEY), PostcodeObserver(listener), listener)
+        callApi(googleApi.getPostcode(lan.toString()+","+lng.toString(), API_KEY), PostcodeObserver(view))
     }
 
-    private class PostcodeObserver(private var listener: GetPostcodeListener) : BaseViewSubscriber<GetPostcodeResponseView, GetPostcodeListener>(listener) {
-        override fun onSucceed(response: GetPostcodeResponseView) {
+    private class PostcodeObserver(val _view: GetPostcodeView) : BaseViewSubscriber<GetPostcodeResponse, GetPostcodeView>(_view) {
+        override fun onSucceed(response: GetPostcodeResponse) {
             var postcode = ""
-            response.results?.get(0)?.addressComponents?.let {
+            response.results?.get(0)?.address_components?.let {
                 mainLoop@for(component in it)
                 {
                     if(component.types != null) {
                         for (type in component.types){
                             if(type == "postal_code"){
-                                postcode = component.shortName ?: ""
+                                postcode = component.short_name ?: ""
                                 break@mainLoop
                             }
                         }
@@ -37,7 +44,7 @@ class PostcodePresenter(private val context: Context, private val endpoints: Goo
 
             }
 
-            listener.onPostcodeFetched(postcode)
+            _view.onPostcodeFetched(postcode)
         }
     }
 

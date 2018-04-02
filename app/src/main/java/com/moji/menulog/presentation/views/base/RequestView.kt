@@ -1,11 +1,13 @@
-package com.moji.menulog.presentation.listeners
+package com.moji.menulog.presentation.views.base
 
-interface RestListener {
+import com.moji.menulog.presentation.views.base.BaseView
+
+interface RequestView : BaseView {
     /**
      * Remove the progress view from the screen. If modal, this will allow interaction with the app to resume. This
      * method should at least hide any error messages now showing.
      */
-    fun hideProgress()
+    fun hideLoading()
 
     /**
      * Invoked instead of onError when the user turns out not to have permission to do the operation they were
@@ -27,8 +29,8 @@ interface RestListener {
 
     /**
      * Display the progress view on the screen. If modal, this will prevent interaction with the app until the
-     * progress view is later removed. showProgress() should begin by hiding any error messages now showing.
+     * progress view is later removed. showLoading() should begin by hiding any error messages now showing.
      */
-    fun showProgress(message: String)
+    fun showLoading(message: String)
 
 }

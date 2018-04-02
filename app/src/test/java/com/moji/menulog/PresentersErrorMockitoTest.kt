@@ -3,8 +3,9 @@ package com.moji.menulog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import com.moji.menulog.data.rest.Endpoints
-import com.moji.menulog.presentation.listeners.GetRestaurantListListener
+import com.moji.menulog.network.RestaurantApi
+import com.moji.menulog.presentation.presenters.PostcodePresenter
+import com.moji.menulog.presentation.views.GetRestaurantListView
 import com.moji.menulog.presentation.presenters.RestaurantPresenter
 import com.nhaarman.mockito_kotlin.any
 import io.reactivex.Observable
@@ -23,12 +24,11 @@ class PresentersErrorsMockitoTest {
     private val mMockContext: Context = Mockito.mock(Context::class.java)
 
     @Mock
-    private val mMockEndpoints: Endpoints = Mockito.mock(Endpoints::class.java)
+    private val mMockEndpoints: RestaurantApi = Mockito.mock(RestaurantApi::class.java)
 
     @Mock
-    private val mMockRestaurantListener: GetRestaurantListListener = Mockito.mock(GetRestaurantListListener::class.java)
+    private val mMockRestaurantView: GetRestaurantListView = Mockito.mock(GetRestaurantListView::class.java)
 
-    @InjectMocks
     lateinit var presenter : RestaurantPresenter
 
     @Before
@@ -42,6 +42,8 @@ class PresentersErrorsMockitoTest {
         // mocking endpoint, so whenever it gets called it throws an exception
         Mockito.`when`( mMockEndpoints.getRestaurantList(any())).thenReturn( Observable.error(Exception("Error")))
 
+        Mockito.`when`( mMockRestaurantView.getContext()).thenReturn(mMockContext)
+        presenter = RestaurantPresenter(mMockRestaurantView, mMockEndpoints)
         presenter.runASynchronous = false
     }
 
@@ -51,9 +53,9 @@ class PresentersErrorsMockitoTest {
     @Test
     fun presenter_show_progress_invoke_onError_then_hide_progress() {
         presenter.getRestaurantList("se19")
-        Mockito.verify(mMockRestaurantListener).showProgress(Mockito.anyString())
-        Mockito.verify(mMockRestaurantListener).onError("Error")
-        Mockito.verify(mMockRestaurantListener).hideProgress()
+        Mockito.verify(mMockRestaurantView).showLoading(Mockito.anyString())
+        Mockito.verify(mMockRestaurantView).onError("Error")
+        Mockito.verify(mMockRestaurantView).hideLoading()
     }
 }
 

@@ -13,22 +13,23 @@ import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.moji.menulog.R
-import com.moji.menulog.presentation.listeners.GetPostcodeListener
+import com.moji.menulog.presentation.fragments.base.BaseFragment
+import com.moji.menulog.presentation.views.GetPostcodeView
 import com.moji.menulog.presentation.presenters.PostcodePresenter
+import com.moji.menulog.utils.EXTRA_POSTCODE
+import com.moji.menulog.utils.MY_PERMISSIONS_REQUEST_LOCATION
 import kotlinx.android.synthetic.main.fragment_postcode.*
 
 
-class PostCodeFragment : ToolbarFragment() , GetPostcodeListener {
+class PostCodeFragment : BaseFragment<PostcodePresenter>() , GetPostcodeView {
 
-    companion object {
-        const val EXTRA_POSTCODE : String = "extra/postcode"
-        const val MY_PERMISSIONS_REQUEST_LOCATION : Int = 101
+    override fun instantiatePresenter(): PostcodePresenter {
+        return PostcodePresenter( this)
     }
 
-    private lateinit var presenter : PostcodePresenter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_postcode, container, false)
     }
@@ -39,9 +40,7 @@ class PostCodeFragment : ToolbarFragment() , GetPostcodeListener {
         setViews()
     }
 
-    private fun setViews() {
-
-        presenter = PostcodePresenter(activity, this)
+    private fun setViews(){
         setToolbarTitle(getString(R.string.app_name))
 
         btnFind.setOnClickListener {
@@ -89,7 +88,7 @@ class PostCodeFragment : ToolbarFragment() , GetPostcodeListener {
         editPostcode.setText(postcode)
     }
 
-    override fun hideProgress() {
+    override fun hideLoading() {
         progressBar.visibility = View.GONE
     }
 
@@ -110,13 +109,12 @@ class PostCodeFragment : ToolbarFragment() , GetPostcodeListener {
         Toast.makeText(activity,getString(R.string.error_no_internet_connection), Toast.LENGTH_LONG).show()
     }
 
-    override fun showProgress(message: String) {
+    override fun showLoading(message: String) {
         progressBar.visibility = View.VISIBLE
     }
 
     private fun getPostcodeFromLocation(){
         try {
-            // API Key: AIzaSyAjva_k_mDjx6OWAhNzaAoOjLgDy26WoDM
             fusedLocationClient.lastLocation
                     .addOnSuccessListener { location: Location? ->
                         location?.let {

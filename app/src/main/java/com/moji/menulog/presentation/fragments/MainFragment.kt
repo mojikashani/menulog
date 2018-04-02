@@ -8,20 +8,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.moji.menulog.R
-import com.moji.menulog.domain.entities.RestaurantView
-import com.moji.menulog.presentation.listeners.GetRestaurantListListener
+import com.moji.menulog.model.Restaurant
+import com.moji.menulog.presentation.fragments.base.BaseFragment
+import com.moji.menulog.presentation.views.GetRestaurantListView
 import com.moji.menulog.presentation.presenters.RestaurantPresenter
-import com.moji.menulog.presentation.recyclerviews.RestaurantAdapter
+import com.moji.menulog.presentation.adapters.RestaurantAdapter
+import com.moji.menulog.utils.EXTRA_POSTCODE
+import com.moji.menulog.utils.LIST_STATE_KEY
 import kotlinx.android.synthetic.main.fragment_main.*
 
-class MainFragment : ToolbarFragment(), GetRestaurantListListener {
-    companion object {
-        const val LIST_STATE_KEY = "recycler_list_state"
-    }
-    private lateinit var presenter : RestaurantPresenter
+class MainFragment : BaseFragment<RestaurantPresenter>(), GetRestaurantListView {
+
     private val newsAdapter = RestaurantAdapter(emptyList())
     private lateinit var postcode : String
     private var listState: Parcelable? = null
+
+    override fun instantiatePresenter(): RestaurantPresenter {
+        return RestaurantPresenter(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,8 +53,7 @@ class MainFragment : ToolbarFragment(), GetRestaurantListListener {
     }
 
     private fun setViews(){
-        postcode = arguments.getString(PostCodeFragment.EXTRA_POSTCODE)
-        presenter = RestaurantPresenter(activity, this)
+        postcode = arguments.getString(EXTRA_POSTCODE)
         swipeRefreshNews.setOnRefreshListener{
             presenter.getRestaurantList(postcode)
         }
@@ -63,8 +66,8 @@ class MainFragment : ToolbarFragment(), GetRestaurantListListener {
     }
 
     // this is called when requesting for news list is successful
-    override fun onRestaurantListFetched(restaurantList: List<RestaurantView>?) {
-        newsAdapter.data = restaurantList
+    override fun onRestaurantListFetched(restaurantList: List<Restaurant>) {
+        newsAdapter.updateRestaurants(restaurantList)
         if(listState != null){
             recyclerRestaurants.layoutManager.onRestoreInstanceState(listState)
             listState = null
@@ -72,7 +75,7 @@ class MainFragment : ToolbarFragment(), GetRestaurantListListener {
     }
 
     // this is called when presenter is done with api calling
-    override fun hideProgress() {
+    override fun hideLoading() {
         swipeRefreshNews?.let {
             it.isRefreshing = false
         }
@@ -96,7 +99,7 @@ class MainFragment : ToolbarFragment(), GetRestaurantListListener {
     }
 
     // this is called when the presenter starts sending request for data
-    override fun showProgress(message: String) {
+    override fun showLoading(message: String) {
         swipeRefreshNews?.let {
             it.isRefreshing = true
         }

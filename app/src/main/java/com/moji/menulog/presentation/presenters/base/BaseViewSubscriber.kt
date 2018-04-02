@@ -1,41 +1,40 @@
-package com.moji.menulog.presentation.presenters
+package com.moji.menulog.presentation.presenters.base
 
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
-import com.moji.menulog.presentation.listeners.RestListener
+import com.moji.menulog.presentation.views.base.RequestView
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
-import java.io.Serializable
+import retrofit2.HttpException
 
 
-abstract class BaseViewSubscriber<T : Serializable, V : RestListener>(private val listener: V) : Observer<T> {
+abstract class BaseViewSubscriber<T : Any, V : RequestView>(private val view: V) : Observer<T> {
 
-    protected var showProgressView: Boolean = true
+    open var showProgressView: Boolean = true
 
-    protected val progressMessage: String = "Loading..."
+    open val progressMessage: String = "Loading..."
 
     override fun onSubscribe(d: Disposable) {
         if (showProgressView) {
-            listener.showProgress(progressMessage)
+            view.showLoading(progressMessage)
         }
     }
 
     override fun onNext(response: T) {
         onSucceed(response)
         if (showProgressView) {
-            listener.hideProgress()
+            view.hideLoading()
         }
     }
 
     override fun onError(e: Throwable) {
         if (e is HttpException && e.code() == 401) {
-            listener.onAuthorizationError(e)
+            view.onAuthorizationError(e)
         }else {// otherwise onError will be called
-            listener.onError(e.message)
+            view.onError(e.message)
         }
 
         // Notify that the progress view should be hidden now
         if (showProgressView) {
-            listener.hideProgress()
+            view.hideLoading()
         }
         e.printStackTrace()
     }

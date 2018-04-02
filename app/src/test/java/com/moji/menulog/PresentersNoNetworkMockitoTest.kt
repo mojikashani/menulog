@@ -2,8 +2,7 @@ package com.moji.menulog
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.moji.menulog.data.rest.RestApi
-import com.moji.menulog.presentation.listeners.GetRestaurantListListener
+import com.moji.menulog.presentation.views.GetRestaurantListView
 import com.moji.menulog.presentation.presenters.RestaurantPresenter
 import org.junit.Before
 import org.junit.Test
@@ -19,7 +18,7 @@ class PresentersNoNetworkMockitoTest {
     private val mMockContext: Context = Mockito.mock(Context::class.java)
 
     @Mock
-    private val mMockRestaurantListener: GetRestaurantListListener = Mockito.mock(GetRestaurantListListener::class.java)
+    private val mMockRestaurantView: GetRestaurantListView = Mockito.mock(GetRestaurantListView::class.java)
 
     private lateinit var presenter : RestaurantPresenter
 
@@ -30,7 +29,9 @@ class PresentersNoNetworkMockitoTest {
         val connectivityManager: ConnectivityManager = Mockito.mock(ConnectivityManager::class.java)
         Mockito.`when`( mMockContext.getSystemService(Context.CONNECTIVITY_SERVICE)).thenReturn( connectivityManager )
         Mockito.`when`( connectivityManager.activeNetworkInfo).thenReturn( null )
-        presenter = RestaurantPresenter(mMockContext, RestApi.getEndpoints(), mMockRestaurantListener)
+
+        Mockito.`when`( mMockRestaurantView.getContext()).thenReturn(mMockContext)
+        presenter = RestaurantPresenter(mMockRestaurantView)
         presenter.runASynchronous = false
     }
 
@@ -39,7 +40,7 @@ class PresentersNoNetworkMockitoTest {
     @Test
     fun presenter_show_progress_invoke_onNoNetworkError_then_hide_progress() {
         presenter.getRestaurantList("se19")
-        Mockito.verify(mMockRestaurantListener).onNoNetworkError()
+        Mockito.verify(mMockRestaurantView).onNoNetworkError()
     }
 }
 

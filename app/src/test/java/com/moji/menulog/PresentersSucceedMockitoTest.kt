@@ -3,9 +3,8 @@ package com.moji.menulog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import com.moji.menulog.data.rest.RestApi
-import com.moji.menulog.domain.entities.RestaurantView
-import com.moji.menulog.presentation.listeners.GetRestaurantListListener
+import com.moji.menulog.model.Restaurant
+import com.moji.menulog.presentation.views.GetRestaurantListView
 import com.moji.menulog.presentation.presenters.RestaurantPresenter
 import com.nhaarman.mockito_kotlin.capture
 import org.hamcrest.CoreMatchers.not
@@ -26,12 +25,12 @@ class PresentersSucceedMockitoTest {
     private val mMockContext: Context = Mockito.mock(Context::class.java)
 
     @Mock
-    private val mMockRestaurantListener: GetRestaurantListListener = Mockito.mock(GetRestaurantListListener::class.java)
+    private val mMockRestaurantView: GetRestaurantListView = Mockito.mock(GetRestaurantListView::class.java)
 
     private lateinit var presenter : RestaurantPresenter
 
     @Captor
-    private lateinit var captor: ArgumentCaptor<List<RestaurantView>>
+    private lateinit var captor: ArgumentCaptor<List<Restaurant>>
 
     @Before
     fun setUp() {
@@ -41,7 +40,9 @@ class PresentersSucceedMockitoTest {
         val networkInfo: NetworkInfo = Mockito.mock(NetworkInfo::class.java)
         Mockito.`when`( mMockContext.getSystemService(Context.CONNECTIVITY_SERVICE)).thenReturn( connectivityManager )
         Mockito.`when`( connectivityManager.activeNetworkInfo).thenReturn( networkInfo )
-        presenter = RestaurantPresenter(mMockContext, RestApi.getEndpoints(), mMockRestaurantListener)
+
+        Mockito.`when`( mMockRestaurantView.getContext()).thenReturn(mMockContext)
+        presenter = RestaurantPresenter(mMockRestaurantView)
         presenter.runASynchronous = false
     }
 
@@ -51,9 +52,9 @@ class PresentersSucceedMockitoTest {
     @Test
     fun presenter_show_progress_returns_a_new_asset_hide_progress() {
         presenter.getRestaurantList("se19")
-        Mockito.verify(mMockRestaurantListener).showProgress(Mockito.anyString())
-        Mockito.verify(mMockRestaurantListener).onRestaurantListFetched(capture(captor))
-        Mockito.verify(mMockRestaurantListener).hideProgress()
+        Mockito.verify(mMockRestaurantView).showLoading(Mockito.anyString())
+        Mockito.verify(mMockRestaurantView).onRestaurantListFetched(capture(captor))
+        Mockito.verify(mMockRestaurantView).hideLoading()
         val capturedArgument = captor.value
         Assert.assertThat(capturedArgument, not(emptyList()))
     }

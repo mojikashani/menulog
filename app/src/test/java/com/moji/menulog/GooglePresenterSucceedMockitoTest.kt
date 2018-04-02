@@ -3,12 +3,8 @@ package com.moji.menulog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import com.moji.menulog.data.rest.GoogleApi
-import com.moji.menulog.data.rest.RestApi
-import com.moji.menulog.domain.entities.RestaurantView
-import com.moji.menulog.presentation.listeners.GetPostcodeListener
+import com.moji.menulog.presentation.views.GetPostcodeView
 import com.moji.menulog.presentation.presenters.PostcodePresenter
-import com.moji.menulog.presentation.presenters.RestaurantPresenter
 import com.nhaarman.mockito_kotlin.capture
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
@@ -28,7 +24,7 @@ class GooglePresenterSucceedMockitoTest {
     private val mMockContext: Context = Mockito.mock(Context::class.java)
 
     @Mock
-    private val mMockPostcodeListener: GetPostcodeListener = Mockito.mock(GetPostcodeListener::class.java)
+    private val mMockPostcodeView: GetPostcodeView = Mockito.mock(GetPostcodeView::class.java)
 
     private lateinit var presenter : PostcodePresenter
 
@@ -43,7 +39,9 @@ class GooglePresenterSucceedMockitoTest {
         val networkInfo: NetworkInfo = Mockito.mock(NetworkInfo::class.java)
         Mockito.`when`( mMockContext.getSystemService(Context.CONNECTIVITY_SERVICE)).thenReturn( connectivityManager )
         Mockito.`when`( connectivityManager.activeNetworkInfo).thenReturn( networkInfo )
-        presenter = PostcodePresenter(mMockContext, GoogleApi.getEndpoints(), mMockPostcodeListener)
+
+        Mockito.`when`( mMockPostcodeView.getContext()).thenReturn(mMockContext)
+        presenter = PostcodePresenter(mMockPostcodeView)
         presenter.runASynchronous = false
     }
 
@@ -53,9 +51,9 @@ class GooglePresenterSucceedMockitoTest {
     @Test
     fun presenter_show_progress_returns_a_new_asset_hide_progress() {
         presenter.getPostcode(51.417521 , - 0.094144)
-        Mockito.verify(mMockPostcodeListener).showProgress(Mockito.anyString())
-        Mockito.verify(mMockPostcodeListener).onPostcodeFetched(capture(captor))
-        Mockito.verify(mMockPostcodeListener).hideProgress()
+        Mockito.verify(mMockPostcodeView).showLoading(Mockito.anyString())
+        Mockito.verify(mMockPostcodeView).onPostcodeFetched(capture(captor))
+        Mockito.verify(mMockPostcodeView).hideLoading()
         val capturedArgument = captor.value
         Assert.assertThat(capturedArgument, CoreMatchers.containsString("SE19"))
     }

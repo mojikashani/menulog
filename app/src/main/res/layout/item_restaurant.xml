@@ -2,52 +2,58 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/layout_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/margin_double">
+
         <ImageView
             android:id="@+id/imgLogo"
             android:layout_width="@dimen/logo_size"
             android:layout_height="@dimen/logo_size"
             android:layout_marginRight="@dimen/margin_double"
-            android:src="@drawable/ic_launcher_background"/>
+            android:src="@drawable/ic_launcher_background" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toRightOf="@id/imgLogo">
+            android:layout_toRightOf="@id/imgLogo"
+            android:orientation="vertical">
+
             <TextView
-                android:layout_marginTop="@dimen/text_size_title_negative_compensate"
                 android:id="@+id/txtName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_size_title_negative_compensate"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_title"/>
+                android:textSize="@dimen/text_size_title" />
+
             <RatingBar
                 android:id="@+id/ratingBar"
+                style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_tiny"
                 android:layout_marginBottom="@dimen/margin_tiny"
-                android:numStars="6"
-                style="?android:attr/ratingBarStyleSmall"
+                android:layout_marginTop="@dimen/margin_tiny"
                 android:isIndicator="false"
-                />
+                android:numStars="6" />
+
             <TextView
                 android:id="@+id/txtCousinType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/grey"
-                android:textSize="@dimen/text_size_subtitle"/>
+                android:textSize="@dimen/text_size_subtitle" />
 
         </LinearLayout>
     </RelativeLayout>
+
     <View
-        android:layout_below="@id/layout_content"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
+        android:layout_below="@id/layout_content"
         android:layout_marginLeft="@dimen/margin_double"
         android:background="@color/light_grey" />
 </RelativeLayout>
