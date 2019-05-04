@@ -47,8 +47,8 @@ class MainFragment : BaseFragment<RestaurantPresenter>(), GetRestaurantListView 
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        if (savedInstanceState != null) {
-            listState = savedInstanceState.getParcelable(LIST_STATE_KEY)
+        savedInstanceState?.let {
+            listState = it.getParcelable(LIST_STATE_KEY)
         }
     }
 

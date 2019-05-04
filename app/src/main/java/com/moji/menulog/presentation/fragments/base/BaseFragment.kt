@@ -1,6 +1,5 @@
 package com.moji.menulog.presentation.fragments.base
 
-import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment

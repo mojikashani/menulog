@@ -28,7 +28,7 @@ class RestaurantAdapter(private var restaurants: List<Restaurant>) : RecyclerVie
             txtName.text = restaurant.Name
             txtCousinType.text = restaurant.cuisineTypesInString
             ratingBar.rating = restaurant.RatingStars ?: 0F
-            Picasso.with(layout.context).load(restaurant.Logo?.get(0)?.StandardResolutionURL).into(imgLogo)
+            Picasso.get().load(restaurant.Logo?.get(0)?.StandardResolutionURL).into(imgLogo)
         }
     }
 

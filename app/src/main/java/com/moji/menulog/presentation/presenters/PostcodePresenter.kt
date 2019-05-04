@@ -31,14 +31,12 @@ open class PostcodePresenter(view: GetPostcodeView)
             response.results?.get(0)?.address_components?.let {
                 mainLoop@for(component in it)
                 {
-                    if(component.types != null) {
-                        for (type in component.types){
-                            if(type == "postal_code"){
-                                postcode = component.short_name ?: ""
-                                break@mainLoop
-                            }
+                    val types: List<String> = component.types ?: continue
+                    for (type in types){
+                        if(type == "postal_code"){
+                            postcode = component.short_name ?: ""
+                            break@mainLoop
                         }
-
                     }
                 }
 
