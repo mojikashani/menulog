@@ -24,10 +24,12 @@ class RestaurantAdapter(private var restaurants: List<Restaurant>) : RecyclerVie
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val restaurant = restaurants[position]
-        holder.txtName.text = restaurant.Name
-        holder.txtCousinType.text = restaurant.cuisineTypesInString
-        holder.ratingBar.rating = restaurant.RatingStars ?: 0F
-        Picasso.with(holder.layout.context).load(restaurant.Logo?.get(0)?.StandardResolutionURL).into(holder.imgLogo)
+        with(holder) {
+            txtName.text = restaurant.Name
+            txtCousinType.text = restaurant.cuisineTypesInString
+            ratingBar.rating = restaurant.RatingStars ?: 0F
+            Picasso.with(layout.context).load(restaurant.Logo?.get(0)?.StandardResolutionURL).into(imgLogo)
+        }
     }
 
     fun updateRestaurants(_restaurants: List<Restaurant>) {

@@ -1,8 +1,7 @@
 package com.moji.menulog.presentation.views.base
 
-import com.moji.menulog.presentation.views.base.BaseView
 
-interface RequestView : BaseView {
+interface RequestView : BaseView{
     /**
      * Remove the progress view from the screen. If modal, this will allow interaction with the app to resume. This
      * method should at least hide any error messages now showing.

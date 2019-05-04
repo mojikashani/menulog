@@ -20,7 +20,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/toolbar_tv_title"
+            android:id="@+id/toolbarTitleTextView"
             style="@style/ToolbarTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

@@ -19,7 +19,7 @@ object ContextModule {
      */
     @Provides
     @JvmStatic
-    internal fun provideContext(baseView: BaseView): Context {
+    internal fun provideContext(baseView: BaseView): Context? {
         return baseView.getContext()
     }
 

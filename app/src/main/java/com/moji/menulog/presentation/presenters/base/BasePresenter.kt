@@ -2,6 +2,7 @@ package com.moji.menulog.presentation.presenters.base
 
 import android.content.Context
 import android.net.ConnectivityManager
+import com.moji.menulog.extentions.isNetworkAvailable
 import com.moji.menulog.injection.component.DaggerPresenterInjector
 import com.moji.menulog.injection.component.PresenterInjector
 import com.moji.menulog.injection.module.ContextModule
@@ -41,7 +42,8 @@ abstract class BasePresenter<out V : RequestView>(protected val view: V) {
     open fun onViewDestroyed(){}
 
     protected fun <T> callApi(baseObservable : Observable<T>, observer: Observer<T>){
-        if (isNetworkAvailable()) {
+        val context = view.getContext() ?: return
+        if (context.isNetworkAvailable()) {
             // run synchronised if flag is false
             var observable  = baseObservable
             if (runASynchronous) {
@@ -53,12 +55,6 @@ abstract class BasePresenter<out V : RequestView>(protected val view: V) {
         } else {
             view.onNoNetworkError()
         }
-    }
-
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = view.getContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetworkInfo = connectivityManager.activeNetworkInfo
-        return activeNetworkInfo != null
     }
 
     /**

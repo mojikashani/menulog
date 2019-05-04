@@ -8,7 +8,7 @@ data class Restaurant(val Name: String?, val RatingStars: Float?
     get() {
         CuisineTypes?.let {
             var cuisineTypesString = ""
-            for (cuisine in CuisineTypes) {
+            for (cuisine in it) {
                 cuisineTypesString += cuisine.Name + ", "
             }
             if(cuisineTypesString.length >=2){

@@ -6,6 +6,7 @@ import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.moji.menulog.R
+import com.moji.menulog.extentions.hideKeyboard
 import com.moji.menulog.presentation.fragments.base.BaseFragment
 import com.moji.menulog.presentation.views.GetPostcodeView
 import com.moji.menulog.presentation.presenters.PostcodePresenter
@@ -34,9 +36,11 @@ class PostCodeFragment : BaseFragment<PostcodePresenter>() , GetPostcodeView {
         return inflater.inflate(R.layout.fragment_postcode, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+        activity?.let {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
+        }
         setViews()
     }
 
@@ -54,14 +58,15 @@ class PostCodeFragment : BaseFragment<PostcodePresenter>() , GetPostcodeView {
         }
 
         btnMyLocation.setOnClickListener{
-            when (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)){
+            val appCompatActivity = activity as? AppCompatActivity ?: return@setOnClickListener
+            when (ContextCompat.checkSelfPermission(appCompatActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
                 PackageManager.PERMISSION_GRANTED ->{
                     // Permission has already been granted
                     getPostcodeFromLocation()
                 }
                 else ->{
                     // No need for explanation: it is obvious to user
-                    ActivityCompat.requestPermissions(activity,
+                    ActivityCompat.requestPermissions(appCompatActivity,
                             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                             MY_PERMISSIONS_REQUEST_LOCATION)
                 }
@@ -118,7 +123,7 @@ class PostCodeFragment : BaseFragment<PostcodePresenter>() , GetPostcodeView {
             fusedLocationClient.lastLocation
                     .addOnSuccessListener { location: Location? ->
                         location?.let {
-                            presenter.getPostcode(location.latitude, location.longitude)
+                            presenter.getPostcode(it.latitude, it.longitude)
                         }
                     }
         }catch (ex : SecurityException){
