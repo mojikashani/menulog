@@ -1,2 +1,5 @@
 package com.moji.menulog.model
-data class PostCodeResult(val address_components: List<AddressComponent>?)
+
+import com.google.gson.annotations.SerializedName
+
+data class PostCodeResult(@SerializedName("address_components") val address_components: List<AddressComponent>?)
